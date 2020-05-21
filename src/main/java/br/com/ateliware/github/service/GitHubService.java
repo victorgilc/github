@@ -36,7 +36,7 @@ public class GitHubService {
 		return new RestTemplate();
 	}
 
-	public GitHubDTO findRepository(String language) {
+	public GitHubRepositoryDTO findAndStore(String language) {
 
 		ResponseEntity<GitHubDTO> response = restTemplate
 				.exchange(buildUrlWithParameters(language).toString(), 

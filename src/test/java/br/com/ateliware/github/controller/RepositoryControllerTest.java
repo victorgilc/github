@@ -27,22 +27,22 @@ public class RepositoryControllerTest {
 	@Test
 	public void testNullLanguage() {
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAll(null);
+			controller.findAndStore(null);
 		});
 	}
 
 	@Test
 	public void testNonexistentLanguages() {
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAll("banana");
+			controller.findAndStore("banana");
 		});
 
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAll("123");
+			controller.findAndStore("123");
 		});
 
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAll("!");
+			controller.findAndStore("!");
 		});
 	}
 
@@ -60,7 +60,7 @@ public class RepositoryControllerTest {
 
 	private void testsForValidLanguages(String language) {
 		try {
-			ResponseEntity<GitHubDTO> response = controller.findAll(language);
+			ResponseEntity<GitHubRepositoryDTO> response = controller.findAndStore(language);
 
 			Assertions.assertTrue(response.getStatusCode().equals(HttpStatus.OK));
 			Assertions.assertTrue(response.getBody() != null);
@@ -69,7 +69,7 @@ public class RepositoryControllerTest {
 			Assertions.assertTrue(!response.getBody().getItems().isEmpty());
 		} catch (Exception e) {
 			Assertions.assertThrows(HttpClientErrorException.class, () -> {
-				controller.findAll(language);
+				controller.findAndStore(language);
 			}, "403 rate limit exceeded");
 		}
 	}
