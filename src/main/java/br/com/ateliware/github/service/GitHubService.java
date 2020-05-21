@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import br.com.ateliware.github.data.GitHubRepository;
 import br.com.ateliware.github.data.structure.GitHubTable;
 import br.com.ateliware.github.data.structure.GitHubTableId;
-import br.com.ateliware.github.dto.GitHubRepositoryDTO;
+import br.com.ateliware.github.dto.GitHubDTO;
 
 @Service
 @Transactional
@@ -36,11 +36,11 @@ public class GitHubService {
 		return new RestTemplate();
 	}
 
-	public GitHubRepositoryDTO findRepository(String language) {
+	public GitHubDTO findRepository(String language) {
 
-		ResponseEntity<GitHubRepositoryDTO> response = restTemplate
+		ResponseEntity<GitHubDTO> response = restTemplate
 				.exchange(buildUrlWithParameters(language).toString(), 
-						HttpMethod.GET, null, GitHubRepositoryDTO.class);
+						HttpMethod.GET, null, GitHubDTO.class);
 		
 		List<GitHubTable> gitHubTableList = response.getBody().getItems().stream().map(item->{
 			GitHubTable gitHubTable = new GitHubTable();

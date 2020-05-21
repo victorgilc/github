@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.ateliware.github.dto.GitHubRepositoryDTO;
+import br.com.ateliware.github.dto.GitHubDTO;
 import br.com.ateliware.github.service.GitHubService;
 
 @RestController
@@ -19,7 +19,7 @@ public class RepositoryController {
 	private GitHubService gitHubService;
 
 	@GetMapping
-	public ResponseEntity<GitHubRepositoryDTO> findAll(@RequestParam String language) {
+	public ResponseEntity<GitHubDTO> findAll(@RequestParam String language) {
 		return new ResponseEntity<>(gitHubService.findRepository(language), 
 				HttpStatus.OK);
 	}

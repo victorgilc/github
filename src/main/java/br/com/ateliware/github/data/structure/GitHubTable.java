@@ -1,7 +1,7 @@
 package br.com.ateliware.github.data.structure;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GitHubTable {
-	@EmbeddedId
-	private GitHubTableId id;
+	@Id
+	private Integer id;
+	private String name;
+	private String language;
 }

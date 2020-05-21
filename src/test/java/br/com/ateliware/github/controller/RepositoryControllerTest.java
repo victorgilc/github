@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 
-import br.com.ateliware.github.dto.GitHubRepositoryDTO;
+import br.com.ateliware.github.dto.GitHubDTO;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -60,7 +60,7 @@ public class RepositoryControllerTest {
 
 	private void testsForValidLanguages(String language) {
 		try {
-			ResponseEntity<GitHubRepositoryDTO> response = controller.findAll(language);
+			ResponseEntity<GitHubDTO> response = controller.findAll(language);
 
 			Assertions.assertTrue(response.getStatusCode().equals(HttpStatus.OK));
 			Assertions.assertTrue(response.getBody() != null);
