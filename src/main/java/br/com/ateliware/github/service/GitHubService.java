@@ -15,43 +15,38 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.ateliware.github.data.GitHubRepository;
 import br.com.ateliware.github.data.structure.GitHubTable;
-import br.com.ateliware.github.data.structure.GitHubTableId;
 import br.com.ateliware.github.dto.GitHubDTO;
+import br.com.ateliware.github.mapper.GitHubMapper;
 
 @Service
 @Transactional
-public class GitHubService {
-
-	@Value("${github.url}")
-	private String urlGitHub;
-
-	@Autowired
-	private RestTemplate restTemplate;
+public class GitHubService{
 	
 	@Autowired
-	private GitHubRepository repository;
+	private RestTemplate restTemplate;
 
 	@Bean
 	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 
-	public GitHubRepositoryDTO findAndStore(String language) {
+	@Value("${github.url}")
+	private String urlGitHub;
 
-		ResponseEntity<GitHubDTO> response = restTemplate
-				.exchange(buildUrlWithParameters(language).toString(), 
-						HttpMethod.GET, null, GitHubDTO.class);
-		
-		List<GitHubTable> gitHubTableList = response.getBody().getItems().stream().map(item->{
-			GitHubTable gitHubTable = new GitHubTable();
-			GitHubTableId gitHubTableId = new GitHubTableId();
-			gitHubTableId.setLanguage(language);
-			gitHubTableId.setName(item.getName());
-			gitHubTable.setId(gitHubTableId);
-			return gitHubTable;
-		}).collect(Collectors.toList());
-		
-		repository.saveAll(gitHubTableList);
+	@Autowired
+	private GitHubRepository repository;
+
+	public GitHubDTO findAndStore(String language) {
+
+
+		ResponseEntity<GitHubDTO> response = restTemplate.exchange(buildUrlWithParameters(language).toString(),
+				HttpMethod.GET, null, GitHubDTO.class);
+
+		List<GitHubTable> gitHubTableList = response.getBody().getItems().stream().map(GitHubMapper::toTable)
+				.collect(Collectors.toList());
+
+		repository.deleteAll();
+		repository.saveAll(gitHubTableList);		
 
 		return response.getBody();
 	}

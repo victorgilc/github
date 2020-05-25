@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class GitHubTable {
 	@Id
-	private Integer id;
+	private Long id;
 	private String name;
 	private String language;
 }

@@ -1,5 +1,7 @@
 package br.com.ateliware.github.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,9 @@ public class RepositoryController {
 	private GitHubService gitHubService;
 	
 	@PostMapping
-	public ResponseEntity<GitHubRepositoryDTO> findAndStore(@RequestBody String language) {
-		return new ResponseEntity<>(gitHubService.findAndStore(language), 
+	public ResponseEntity<GitHubDTO> findAndStore(@RequestBody Map<String, Object> parameters) {
+		return new ResponseEntity<>(gitHubService.findAndStore(parameters.get("language").toString()), 
 				HttpStatus.OK);
 	}
 }
+	

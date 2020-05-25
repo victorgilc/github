@@ -1,5 +1,8 @@
 package br.com.ateliware.github.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,15 +37,15 @@ public class RepositoryControllerTest {
 	@Test
 	public void testNonexistentLanguages() {
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAndStore("banana");
+			controller.findAndStore(buildLanguageParameter("banana"));
 		});
 
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAndStore("123");
+			controller.findAndStore(buildLanguageParameter("123"));
 		});
 
 		Assertions.assertThrows(HttpClientErrorException.class, () -> {
-			controller.findAndStore("!");
+			controller.findAndStore(buildLanguageParameter("!"));
 		});
 	}
 
@@ -60,7 +63,7 @@ public class RepositoryControllerTest {
 
 	private void testsForValidLanguages(String language) {
 		try {
-			ResponseEntity<GitHubRepositoryDTO> response = controller.findAndStore(language);
+			ResponseEntity<GitHubDTO> response = controller.findAndStore(buildLanguageParameter(language));
 
 			Assertions.assertTrue(response.getStatusCode().equals(HttpStatus.OK));
 			Assertions.assertTrue(response.getBody() != null);
@@ -69,8 +72,14 @@ public class RepositoryControllerTest {
 			Assertions.assertTrue(!response.getBody().getItems().isEmpty());
 		} catch (Exception e) {
 			Assertions.assertThrows(HttpClientErrorException.class, () -> {
-				controller.findAndStore(language);
+				controller.findAndStore(buildLanguageParameter(language));
 			}, "403 rate limit exceeded");
 		}
+	}
+	
+	private Map<String, Object> buildLanguageParameter(String language){
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("language", language);
+		return parameters;
 	}
 }
