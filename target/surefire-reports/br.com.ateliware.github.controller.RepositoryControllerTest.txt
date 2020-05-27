@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: br.com.ateliware.github.controller.RepositoryControllerTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 119.376 s - in br.com.ateliware.github.controller.RepositoryControllerTest

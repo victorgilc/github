@@ -16,14 +16,14 @@ import br.com.ateliware.github.service.GitHubService;
 @RestController
 @RequestMapping(value = "repository")
 public class RepositoryController {
-	
+
 	@Autowired
 	private GitHubService gitHubService;
-	
+
 	@PostMapping
 	public ResponseEntity<GitHubDTO> findAndStore(@RequestBody Map<String, Object> parameters) {
-		return new ResponseEntity<>(gitHubService.findAndStore(parameters.get("language").toString()), 
+		return new ResponseEntity<>(
+				gitHubService.findAndStore(parameters != null ? parameters.get("language").toString() : null),
 				HttpStatus.OK);
 	}
 }
-	

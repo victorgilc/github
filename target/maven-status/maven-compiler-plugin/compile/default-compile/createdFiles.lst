@@ -1,0 +1,12 @@
+br\com\ateliware\github\configuration\CorsConfiguration.class
+br\com\ateliware\github\controller\RepositoryController.class
+br\com\ateliware\github\mapper\GitHubMapper.class
+br\com\ateliware\github\data\GitHubRepository.class
+br\com\ateliware\github\dto\GitHubRepositoryItemDTO.class
+br\com\ateliware\github\dto\GitHubItemDTO.class
+br\com\ateliware\github\service\GitHubService.class
+br\com\ateliware\github\exception\GlobalExceptionHandler.class
+br\com\ateliware\github\dto\GitHubDTO.class
+br\com\ateliware\github\configuration\CorsConfiguration$1.class
+br\com\ateliware\github\GithubApplication.class
+br\com\ateliware\github\data\structure\GitHubTable.class
