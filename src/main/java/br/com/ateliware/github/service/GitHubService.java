@@ -2,6 +2,7 @@ package br.com.ateliware.github.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -16,12 +17,15 @@ import org.springframework.web.client.RestTemplate;
 import br.com.ateliware.github.data.GitHubRepository;
 import br.com.ateliware.github.data.structure.GitHubTable;
 import br.com.ateliware.github.dto.GitHubDTO;
+import br.com.ateliware.github.dto.GitHubItemDTO;
+import br.com.ateliware.github.exception.NullParametersException;
 import br.com.ateliware.github.mapper.GitHubMapper;
+import br.com.ateliware.github.parameters.RepositoryParameters;
 
 @Service
 @Transactional
-public class GitHubService{
-	
+public class GitHubService {
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -36,23 +40,53 @@ public class GitHubService{
 	@Autowired
 	private GitHubRepository repository;
 
-	public GitHubDTO findAndStore(String language) {
-		ResponseEntity<GitHubDTO> response = restTemplate.exchange(buildUrlWithParameters(language).toString(),
-				HttpMethod.GET, null, GitHubDTO.class);
+	public GitHubDTO findAndStore(RepositoryParameters parameters) {
+		validateParameters(parameters);
+		
+		ResponseEntity<GitHubDTO> response = fetchGithub(parameters);
 
-		List<GitHubTable> gitHubTableList = response.getBody().getItems().stream().map(GitHubMapper::toTable)
-				.collect(Collectors.toList());
-
-		repository.deleteAll();
-		repository.saveAll(gitHubTableList);		
-
-		return response.getBody();
+		List<GitHubItemDTO> itemsThatAlreadyExists = repository.findByLanguage(parameters.getLanguage()).stream().map(GitHubMapper::toDto).collect(Collectors.toList());
+		
+		List<GitHubItemDTO> itemsThatDoesntExists = response.getBody().getItems().stream().filter(item->!itemsThatAlreadyExists.contains(item)).collect(Collectors.toList());
+		
+		saveDatabase(itemsThatAlreadyExists, itemsThatDoesntExists);
+		
+		GitHubDTO dto = mountDtoToReturn(response, itemsThatAlreadyExists, itemsThatDoesntExists);
+		
+		return dto;
 	}
 
-	private StringBuilder buildUrlWithParameters(String language) {
+	private ResponseEntity<GitHubDTO> fetchGithub(RepositoryParameters parameters) {
+		ResponseEntity<GitHubDTO> response = restTemplate.exchange(buildUrlWithParameters(parameters),
+				HttpMethod.GET, null, GitHubDTO.class);
+		return response;
+	}
+
+	private void saveDatabase(List<GitHubItemDTO> itemsThatAlreadyExists, List<GitHubItemDTO> itemsThatDoesntExists) {
+		List<GitHubTable> toSave = itemsThatDoesntExists.stream().filter(item->!itemsThatAlreadyExists.contains(item)).map(GitHubMapper::toTable).collect(Collectors.toList());
+		
+		repository.saveAll(toSave);
+	}
+
+	private GitHubDTO mountDtoToReturn(ResponseEntity<GitHubDTO> response, List<GitHubItemDTO> itemsThatAlreadyExists,
+			List<GitHubItemDTO> itemsThatDoesntExists) {
+		GitHubDTO dto = new GitHubDTO();
+		dto.setItems(Stream.concat(itemsThatAlreadyExists.stream(), itemsThatDoesntExists.stream())
+                .collect(Collectors.toList()));
+		dto.setTotalCount(response.getBody().getTotalCount());
+		return dto;
+	}
+
+	private String buildUrlWithParameters(RepositoryParameters parameters) {
 		StringBuilder urlBuilder = new StringBuilder(urlGitHub);
 		urlBuilder.append("language:");
-		urlBuilder.append(language);
-		return urlBuilder;
+		urlBuilder.append(parameters.getLanguage());
+		return urlBuilder.toString();
+	}
+
+	private void validateParameters(RepositoryParameters parameters) {
+		if (parameters == null) {
+			throw new NullParametersException();
+		}
 	}
 }

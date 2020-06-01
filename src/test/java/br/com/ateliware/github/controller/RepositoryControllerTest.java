@@ -1,8 +1,5 @@
 package br.com.ateliware.github.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 
 import br.com.ateliware.github.dto.GitHubDTO;
+import br.com.ateliware.github.exception.NullParametersException;
+import br.com.ateliware.github.parameters.RepositoryParameters;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,8 +27,8 @@ public class RepositoryControllerTest {
 	}
 
 	@Test
-	public void testNullLanguage() {
-		Assertions.assertThrows(HttpClientErrorException.class, () -> {
+	public void testNullParameters() {
+		Assertions.assertThrows(NullParametersException.class, () -> {
 			controller.findAndStore(null);
 		});
 	}
@@ -77,9 +76,9 @@ public class RepositoryControllerTest {
 		}
 	}
 	
-	private Map<String, Object> buildLanguageParameter(String language){
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("language", language);
+	private RepositoryParameters buildLanguageParameter(String language){
+		RepositoryParameters parameters = new RepositoryParameters();
+		parameters.setLanguage(language);
 		return parameters;
 	}
 }
