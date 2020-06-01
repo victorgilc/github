@@ -20,7 +20,7 @@ import br.com.ateliware.github.dto.GitHubDTO;
 public class RepositoryControllerTest {
 
 	@Autowired
-	RepositoryController controller;
+	private RepositoryController controller;
 
 	@Test
 	public void testDependencyInjection() {
